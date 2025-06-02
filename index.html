@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 Office Environmental Monitor - Computer Screen</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+</head>
+<body>
+    <div class="monitor-frame">
+        <div class="power-led"></div>
+        <div class="screen-bezel">
+            <div class="computer-frame">
+                <div class="menu-bar">
+                    <div class="menu-item" id="fileMenu">
+                        File
+                    </div>
+                    <div class="menu-item" id="viewMenu">
+                        View
+                    </div>
+                    <div class="menu-item" id="toolsMenu">
+                        Tools
+                    </div>
+                    <div class="menu-item" id="helpMenu">
+                        Help
+                    </div>
+                    
+                    <div class="window-controls">
+                        <div class="window-control minimize">−</div>
+                        <div class="window-control maximize">□</div>
+                        <div class="window-control close">×</div>
+                    </div>
+                </div>
+
+                
+                <div class="status-bar">
+                    <div class="connection-indicator">
+                        <div class="connection-dot" id="connectionDot"></div>
+                        <span id="connectionStatus">Connected to ESP32 via WAN</span>
+                    </div>
+                    <div class="wan-status">
+                        <span>IP: <span id="deviceIP">192.168.1.100</span></span>
+                        <span>Signal: <span id="signalStrength">-45 dBm</span></span>
+                        <span>Uptime: <span id="uptime">2h 34m</span></span>
+                        <span>Last Update: <span id="lastUpdate">Just now</span></span>
+                    </div>
+                </div>
+
+                <div class="screen">
+                    <div class="container">
+                        <div class="header">
+                            <h1>WAN-Connected Smart Office Monitoring System</h1>
+                            <div class="device-info">
+                                <div class="info-item">
+                                    <strong>Device:</strong> ESP32 DevKit
+                                </div>
+                                <div class="info-item">
+                                    <strong>Location:</strong> Office Environment
+                                </div>
+                                <div class="info-item">
+                                    <strong>Network:</strong> WAN Connected
+                                </div>
+                                <div class="info-item">
+                                    <strong>Firmware:</strong> v2.1.3
+                                </div>
+                            </div>
+                            
+                            <div class="status" id="systemStatus">
+                                ✓ All systems operational
+                            </div>
+                        </div>
+
+                        <div class="sensor-grid">
+                            <div class="sensor-card normal" id="temperatureCard">
+                                <div class="sensor-icon">🌡️</div>
+                                <div class="sensor-name">Temperature</div>
+                                <div class="sensor-value normal" id="temperatureValue">
+                                    22.0<span class="sensor-unit">°C</span>
+                                </div>
+                                <div class="threshold-info">Optimal Range: 18°C - 26°C</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill normal" id="temperatureProgress" style="width: 50%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="sensor-card normal" id="humidityCard">
+                                <div class="sensor-icon">💧</div>
+                                <div class="sensor-name">Humidity</div>
+                                <div class="sensor-value normal" id="humidityValue">
+                                    45.0<span class="sensor-unit">%</span>
+                                </div>
+                                <div class="threshold-info">Normal: 30% - 70%</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill normal" id="humidityProgress" style="width: 37.5%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="sensor-card normal" id="lightCard">
+                                <div class="sensor-icon">💡</div>
+                                <div class="sensor-name">Light Level</div>
+                                <div class="sensor-value normal" id="lightValue">
+                                    300<span class="sensor-unit">lux</span>
+                                </div>
+                                <div class="threshold-info">Normal: 200 - 800 lux</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill normal" id="lightProgress" style="width: 16.7%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="sensor-card normal" id="noiseCard">
+                                <div class="sensor-icon">🔊</div>
+                                <div class="sensor-name">Noise Level</div>
+                                <div class="sensor-value normal" id="noiseValue">
+                                    40.0<span class="sensor-unit">dB</span>
+                                </div>
+                                <div class="threshold-info">Normal: < 60 dB</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill normal" id="noiseProgress" style="width: 66.7%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="warnings-section" id="warningsSection">
+                            <div class="warnings-title">⚠️ WARNINGS ⚠️</div>
+                            <div id="warningsList"></div>
+                        </div>
+                    </div>
+                </div>
+            
+
+                <div class="taskbar">
+                    <button class="start-button">Start</button>
+                    <div class="taskbar-apps">
+                        <div class="app-icon active" title="ESP32 Monitor">🖥️</div>
+                        <div class="app-icon" title="File Explorer">📁</div>
+                        <div class="app-icon" title="Browser">🌐</div>
+                        <div class="app-icon" title="Terminal">⚡</div>
+                        <div class="app-icon" title="Settings">⚙️</div>
+                    </div>
+                    <div class="system-tray">
+                        <div class="notification-area">
+                            <div class="notification-icon" title="Network">📶</div>
+                            <div class="notification-icon" title="Volume">🔊</div>
+                            <div class="notification-icon" title="Battery">🔋</div>
+                        </div>
+                        <div class="system-time" id="taskbarTime">
+                            <div id="taskbarTimeDisplay">
+                                <div class="datetime" id="datetime"></div>
+                            </div>
+                            <div id="taskbarDateDisplay">6/1/2025</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+       
