@@ -1,6 +1,6 @@
 // MQTT Configuration
 const MQTT_CONFIG = {
-    broker: 'ws://broker.hivemq.com:8000', // WebSocket port (usually 9001)
+    broker: 'wss://broker.hivemq.com:8000', // WebSocket port (usually 9001)
     // For HiveMQ public broker: 'wss://broker.hivemq.com:8884/mqtt'
     // For local broker: 'ws://192.168.1.100:9001'
     options: {
@@ -8,7 +8,8 @@ const MQTT_CONFIG = {
         // username: 'YOUR_MQTT_USERNAME', // Leave empty if no auth
         // password: 'YOUR_MQTT_PASSWORD', // Leave empty if no auth
         keepalive: 60,
-        clean: true
+        clean: true,
+        useSSL: true // Use SSL for secure connection
     },
     topics: {
         sensors: 'ESP/office/sensors/data',
